@@ -1,23 +1,22 @@
 # ABYSSA — kronieken van het Afgrondkoninkrijk
 
 Een meerdelige **dark-fantasy** site (statische HTML/CSS/JS) in verhaalvorm, rond de
-eindeloos bewegende edits en het personage **Varynth, de Bewaker van de Afgrond**.
+eindeloos bewegende edits, de audio en het universum rond **Varynth, de Bewaker van de Afgrond**.
 
 ## Pagina's
-- `index.html` — Proloog: hero, beelden uit de afgrond (looping webp's), de stem (audio), navigatie naar de kroniek
-- `varynth.html` — Het personage: volledige beschrijving, titels, oath, quote en zijn grootste geheim
-- `koninkrijken.html` — Koninkrijken & facties met Varynth als rode draad
-- `legendes.html` — Vier fluisterverhalen (legendes)
-
-## Sfeer & kleuren
-Kleuren geïnspireerd op de webp-beelden: nachtblauw `#0a1128`, mist `#16213e`, indigo `#1a1a2e`,
-bloedrood `#8f1d1d`, goud `#d4af37`, mistig tekstblauw `#cfd8e8`. Film-grain, vignette, flicker,
-langzame crossfade/zoom op de achtergrond en incidentele "fluisteringen" voor de enge sfeer.
+- `index.html` — **Proloog**: hero, vier eindeloos bewegende beelden (looping webp's), "de stem van de afgrond" (audio), kaarten naar de kroniek
+- `varynth.html` — **Varynth**: volledig dossier (naam, titels, oorsprong, leeftijd, status, rol, quote, geheim)
+- `personages.html` — **Personages**: Grimwick, Malthor, Thaerion, de Twin Echoes of Velen, het Waxen Trio (Morva, Vola & Zelyth), Malagor (hoofdschurk), Drakhor, Keldrin (hoofdpersonage) — met afbeelding, geheim, relaties en signature quote
+- `koninkrijken.html` — **Koninkrijken & facties** met Varynth als rode draad
+- `legendes.html` — **Vier legendes** in fluisterverhaal-stijl
 
 ## Assets
-- `assets/bg/DF1.webp`, `VERT_DF2-1.webp`, `VERT_DF2-2.webp` — animated webp, loop-count op `0` (oneindig)
-- `assets/img/gouden-masker.jpg` — Varynth met het gouden masker
+- `assets/bg/` — animated webp's, loop-count op `0` = oneindig (geverifieerd met libwebp): `VERT_DF2-1`, `VERT_DF2-2`, `malagor-walk`, `trio-play`
+- `assets/img/` — personage-afbeeldingen: `gouden-masker.jpg` (Varynth), `grimwick.png`, `malthor.jpg`, `twin-echoes.jpg`, `waxen-trio.jpg`, `thaerion.png`, `keldrin.png`
 - `assets/audio/VERT_DF2.flac` — de stem van de afgrond (FLAC 24-bit / 44,1 kHz)
+
+## Sfeer & kleuren
+Nachtblauw `#0a1128`, mist `#16213e`, indigo `#1a1a2e`, bloedrood `#8f1d1d`, goud `#d4af37` (uit de beelden zelf), mistig tekstblauw `#cfd8e8`. Film-grain, vignette, flicker, crossfade/zoom, dropcaps en incidentele "fluisteringen".
 
 ## Lokaal bekijken
 Chrome, Edge of Firefox aangeraden (FLAC + animated webp). Lokale server: `python3 -m http.server 8000` → `http://localhost:8000`.
