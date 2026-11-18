@@ -1,22 +1,26 @@
-# DF-site
+# DF-site — VERT_DF
 
-Persoonlijke **dark-fantasy site** (statische HTML/CSS/JS) rond TikTok-edits in dark-fantasy thema.
+Een mysterieuze, nostalgische **dark-fantasy site** (statische HTML/CSS/JS) rond de geüploade edits.
 
 ## Wat zit erin
 `index.html` bevat:
 
-- **Bewegende achtergrond** van de animated `.webp`-bestanden (`assets/bg/DF1.webp`, `VERT_DF2-1.webp`, `VERT_DF2-2.webp`) — ze wisselen elkaar af met een crossfade + zoom-effect
-- **Hoofdpersonage DFGold** (gouden masker) — `assets/img/DFGold.jpg`, met eigen sectie en lore
-- **Audiospeler** met het geüploade `assets/audio/VERT_DF2.flac` (FLAC 24-bit / 44,1 kHz, stereo)
+- **Eindeloos bewegende .webp-achtergrond** — `assets/bg/DF1.webp`, `VERT_DF2-1.webp`, `VERT_DF2-2.webp`
+  (animated webp, loop-count op `0` = oneindig) wisselen fullscreen af met crossfade + zoom
+- **De figuur met het gouden masker** — `assets/img/gouden-masker.jpg` (naam expres onbekend, voor het mysterie)
+- **De stem** — audiospeler met `assets/audio/VERT_DF2.flac`
+
+## Kleuren
+Geïnspireerd op de webp-beelden zelf: nachtblauw `#0a1128`, mist `#16213e`, indigo `#1a1a2e`,
+zwart `#000000`, goud `#d4af37` (het masker), mistig tekstblauw `#cfd8e8`. Plus film-grain en
+vignette voor de nostalgische sfeer.
 
 ## Bestanden
-- `assets/bg/` — animated webp achtergronden (DF1, VERT_DF2-1, VERT_DF2-2)
-- `assets/img/DFGold.jpg` — screenshot van DFGold met het gouden masker
-- `assets/audio/VERT_DF2.flac` — audio van de edit
-- `css/style.css` — dark theme met gouden accenten, responsive
-- `js/script.js` — achtergrond-wisselaar, audio-knop, mobiel menu, scroll-reveal
+- `assets/bg/` — animated webp banden (loop = oneindig)
+- `assets/img/gouden-masker.jpg` — screenshot van de figuur met het gouden masker
+- `assets/audio/VERT_DF2.flac` — audio (FLAC 24-bit / 44,1 kHz)
+- `css/style.css`, `js/script.js`
 
 ## Lokaal bekijken
-Open `index.html` in Chrome, Edge of Firefox (FLAC en animated webp worden breed ondersteund).
-Nog beter: start een lokale server, bv. `python3 -m http.server 8000`, en ga naar `http://localhost:8000`.
+Chrome, Edge of Firefox aangeraden (FLAC + animated webp). Lokale server: `python3 -m http.server 8000` → `http://localhost:8000`.
 In Safari: animated webp werkt, FLAC niet — daar zie je een downloadlink voor het .flac-bestand.

@@ -20,7 +20,7 @@ if (lagen.length > 1) {
         lagen[huidige].classList.remove('actief');
         huidige = (huidige + 1) % lagen.length;
         lagen[huidige].classList.add('actief');
-    }, 7000);
+    }, 8000);
 }
 
 const audio = document.getElementById('audio');

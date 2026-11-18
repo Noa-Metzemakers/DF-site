@@ -1,11 +1,13 @@
 :root {
-    --achtergrond: #07070c;
-    --paneel: rgba(16, 16, 26, 0.82);
-    --tekst: #ece9e2;
-    --tekst-zwak: #b3b0a8;
+    --bg: #05060d;
+    --nachtblauw: #0a1128;
+    --mist: #16213e;
+    --indigo: #1a1a2e;
+    --tekst: #cfd8e8;
+    --tekst-zwak: #8b96ad;
     --goud: #d4af37;
     --goud-helder: #f0c75e;
-    --lijn: rgba(212, 175, 55, 0.25);
+    --lijn: rgba(212, 175, 55, 0.22);
     --font-kop: Georgia, 'Times New Roman', serif;
     --font-tekst: 'Segoe UI', Verdana, Arial, sans-serif;
 }
@@ -21,10 +23,10 @@ html {
 }
 
 body {
-    background: var(--achtergrond);
+    background: var(--bg);
     color: var(--tekst);
     font-family: var(--font-tekst);
-    line-height: 1.7;
+    line-height: 1.75;
     min-height: 100vh;
     overflow-x: hidden;
 }
@@ -38,14 +40,14 @@ a {
     inset: 0;
     z-index: -2;
     overflow: hidden;
-    background: var(--achtergrond);
+    background: var(--nachtblauw);
 }
 
 .achtergrond-laag {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 1.6s ease;
+    transition: opacity 2.2s ease;
 }
 
 .achtergrond-laag img {
@@ -53,6 +55,7 @@ a {
     height: 100%;
     object-fit: cover;
     transform: scale(1.08);
+    filter: saturate(0.82) contrast(1.06) brightness(0.88);
 }
 
 .achtergrond-laag.actief {
@@ -60,7 +63,7 @@ a {
 }
 
 .achtergrond-laag.actief img {
-    animation: zoomlang 9s ease-in-out infinite alternate;
+    animation: zoomlang 11s ease-in-out infinite alternate;
 }
 
 @keyframes zoomlang {
@@ -72,8 +75,17 @@ a {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(to bottom, rgba(7, 7, 12, 0.72) 0%, rgba(7, 7, 12, 0.35) 40%, rgba(7, 7, 12, 0.85) 100%),
-        radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(7, 7, 12, 0.55) 100%);
+        radial-gradient(ellipse at 50% 35%, transparent 0%, rgba(5, 6, 13, 0.62) 100%),
+        linear-gradient(to bottom, rgba(10, 17, 40, 0.78) 0%, rgba(10, 17, 40, 0.3) 40%, rgba(5, 6, 13, 0.9) 100%);
+}
+
+.grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .site-header {
@@ -84,23 +96,19 @@ a {
     align-items: center;
     justify-content: space-between;
     padding: 1rem 2rem;
-    background: rgba(7, 7, 12, 0.78);
+    background: rgba(5, 6, 13, 0.72);
     border-bottom: 1px solid var(--lijn);
     backdrop-filter: blur(8px);
 }
 
 .logo {
     font-family: var(--font-kop);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.3em;
     color: var(--goud);
     text-decoration: none;
     text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
-}
-
-.logo span {
-    color: var(--tekst);
 }
 
 .site-nav ul {
@@ -112,8 +120,8 @@ a {
 .site-nav a {
     color: var(--tekst-zwak);
     text-decoration: none;
-    font-size: 0.82rem;
-    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     padding-bottom: 0.25rem;
     border-bottom: 2px solid transparent;
@@ -135,6 +143,11 @@ a {
     cursor: pointer;
 }
 
+main {
+    position: relative;
+    z-index: 2;
+}
+
 .hero {
     min-height: calc(100vh - 72px);
     display: grid;
@@ -148,29 +161,30 @@ a {
 
 .hero-kicker {
     color: var(--goud);
-    letter-spacing: 0.35em;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     margin-bottom: 1rem;
 }
 
 .hero h1 {
     font-family: var(--font-kop);
-    font-size: clamp(3rem, 9vw, 6rem);
+    font-size: clamp(3.2rem, 9vw, 6.2rem);
     line-height: 0.95;
-    letter-spacing: 0.06em;
-    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.08em;
+    color: var(--tekst);
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.85);
 }
 
 .hero h1 span {
     color: var(--goud);
-    text-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+    text-shadow: 0 0 34px rgba(212, 175, 55, 0.55);
 }
 
 .hero-tag {
     color: var(--tekst-zwak);
     font-size: 1.05rem;
-    max-width: 480px;
+    max-width: 470px;
     margin: 1.5rem 0 2.2rem;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
 }
@@ -185,8 +199,8 @@ a {
     display: inline-block;
     padding: 0.85rem 1.9rem;
     text-decoration: none;
-    font-size: 0.85rem;
-    letter-spacing: 0.15em;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     border: 1px solid var(--goud);
     cursor: pointer;
@@ -194,25 +208,24 @@ a {
 }
 
 .knop-primair {
-    background: rgba(7, 7, 12, 0.65);
+    background: rgba(5, 6, 13, 0.6);
     color: var(--goud-helder);
 }
 
 .knop-primair:hover {
     background: var(--goud);
-    color: #14100a;
+    color: var(--nachtblauw);
     box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
 }
 
 .knop-goud {
     background: var(--goud);
-    color: #14100a;
-    border-color: var(--goud);
+    color: var(--nachtblauw);
 }
 
 .knop-goud:hover {
     background: var(--goud-helder);
-    box-shadow: 0 0 24px rgba(240, 199, 94, 0.6);
+    box-shadow: 0 0 26px rgba(240, 199, 94, 0.6);
 }
 
 .hero-foto {
@@ -223,16 +236,17 @@ a {
 .hero-foto img {
     max-height: 62vh;
     border: 2px solid var(--goud);
-    border-radius: 6px;
-    box-shadow: 0 0 45px rgba(212, 175, 55, 0.45), 0 18px 50px rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    box-shadow: 0 0 45px rgba(212, 175, 55, 0.4), 0 18px 50px rgba(0, 0, 0, 0.75);
+    filter: saturate(0.9) contrast(1.05);
 }
 
 .hero-foto figcaption,
-.dfgold-foto figcaption,
-.edit-kaart figcaption {
+.figuur-foto figcaption,
+.band-kaart figcaption {
     margin-top: 0.8rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--goud);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
@@ -246,9 +260,9 @@ a {
 
 .sectie-kicker {
     color: var(--goud);
-    letter-spacing: 0.3em;
+    letter-spacing: 0.34em;
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     margin-bottom: 0.6rem;
 }
 
@@ -257,6 +271,7 @@ a {
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     letter-spacing: 0.05em;
     margin-bottom: 1.2rem;
+    color: var(--tekst);
     text-shadow: 0 3px 20px rgba(0, 0, 0, 0.85);
 }
 
@@ -268,121 +283,126 @@ a {
 }
 
 .sectie-intro code {
-    background: rgba(212, 175, 55, 0.15);
+    background: rgba(212, 175, 55, 0.12);
     border: 1px solid var(--lijn);
     padding: 0.1rem 0.4rem;
     border-radius: 4px;
     color: var(--goud-helder);
 }
 
-.dfgold-grid {
+.figuur-grid {
     display: grid;
     grid-template-columns: 380px 1fr;
     gap: 3rem;
     align-items: start;
-    background: var(--paneel);
+    background: rgba(10, 17, 40, 0.72);
     border: 1px solid var(--lijn);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 2.5rem;
     backdrop-filter: blur(6px);
 }
 
-.dfgold-foto img {
+.figuur-foto img {
     width: 100%;
     border: 2px solid var(--goud);
-    border-radius: 6px;
-    box-shadow: 0 0 35px rgba(212, 175, 55, 0.35);
+    border-radius: 4px;
+    box-shadow: 0 0 35px rgba(212, 175, 55, 0.3);
+    filter: saturate(0.9) contrast(1.05);
 }
 
-.dfgold-rol {
+.figuur-rol {
     color: var(--goud);
-    font-size: 0.8rem;
-    letter-spacing: 0.25em;
+    font-size: 0.78rem;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     margin-bottom: 1rem;
 }
 
-.dfgold-tekst p {
+.figuur-tekst p {
     color: var(--tekst-zwak);
     margin-bottom: 1rem;
 }
 
-.dfgold-feiten {
+.figuur-feiten {
     margin-top: 1.2rem;
     list-style: none;
 }
 
-.dfgold-feiten li {
+.figuur-feiten li {
     border-left: 3px solid var(--goud);
     padding: 0.35rem 0 0.35rem 0.9rem;
     margin-bottom: 0.5rem;
     color: var(--tekst);
     font-size: 0.92rem;
-    background: rgba(212, 175, 55, 0.07);
+    background: rgba(212, 175, 55, 0.06);
 }
 
-.edits-grid {
+.banden-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
 }
 
-.edit-kaart {
+.band-kaart {
     text-align: center;
 }
 
-.edit-kaart img {
+.band-kaart img {
     width: 100%;
     aspect-ratio: 9 / 16;
     object-fit: cover;
     border: 1px solid var(--lijn);
-    border-radius: 8px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    filter: saturate(0.85) contrast(1.05);
     transition: transform 0.25s, box-shadow 0.25s;
 }
 
-.edit-kaart:hover img {
+.band-kaart:hover img {
     transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.35);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
 }
 
-.audio-speler {
+.stem-speler {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     flex-wrap: wrap;
-    background: var(--paneel);
+    background: rgba(10, 17, 40, 0.72);
     border: 1px solid var(--lijn);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 2rem;
     backdrop-filter: blur(6px);
 }
 
-.audio-speler audio {
+.stem-speler audio {
     flex: 1;
     min-width: 260px;
     accent-color: var(--goud);
 }
 
-.audio-nb {
+.stem-nb {
     margin-top: 1rem;
     color: var(--tekst-zwak);
     font-size: 0.85rem;
 }
 
 .site-footer {
+    position: relative;
+    z-index: 2;
     text-align: center;
     padding: 2rem;
     border-top: 1px solid var(--lijn);
     color: var(--tekst-zwak);
-    font-size: 0.85rem;
-    background: rgba(7, 7, 12, 0.8);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    background: rgba(5, 6, 13, 0.85);
 }
 
 .reveal {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
 .reveal.zichtbaar {
@@ -406,16 +426,16 @@ a {
         justify-content: center;
     }
 
-    .dfgold-grid {
+    .figuur-grid {
         grid-template-columns: 1fr;
     }
 
-    .dfgold-foto {
+    .figuur-foto {
         max-width: 340px;
         margin: 0 auto;
     }
 
-    .edits-grid {
+    .banden-grid {
         grid-template-columns: 1fr;
         max-width: 340px;
         margin: 0 auto;
@@ -450,8 +470,8 @@ a {
         padding: 3.5rem 1.5rem;
     }
 
-    .dfgold-grid,
-    .audio-speler {
+    .figuur-grid,
+    .stem-speler {
         padding: 1.5rem;
     }
 }
