@@ -13,6 +13,37 @@ if (jaar) {
     jaar.textContent = new Date().getFullYear();
 }
 
+const lagen = document.querySelectorAll('.achtergrond-laag');
+if (lagen.length > 1) {
+    let huidige = 0;
+    setInterval(() => {
+        lagen[huidige].classList.remove('actief');
+        huidige = (huidige + 1) % lagen.length;
+        lagen[huidige].classList.add('actief');
+    }, 7000);
+}
+
+const audio = document.getElementById('audio');
+const audioKnop = document.getElementById('audio-knop');
+if (audio && audioKnop) {
+    audioKnop.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    });
+    audio.addEventListener('play', () => {
+        audioKnop.textContent = '⏸ Pauzeer VERT_DF2';
+    });
+    audio.addEventListener('pause', () => {
+        audioKnop.textContent = '▶ Speel VERT_DF2 af';
+    });
+    audio.addEventListener('ended', () => {
+        audioKnop.textContent = '▶ Speel VERT_DF2 af';
+    });
+}
+
 const reveals = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window && reveals.length > 0) {
     const observer = new IntersectionObserver((entries) => {
@@ -26,14 +57,4 @@ if ('IntersectionObserver' in window && reveals.length > 0) {
     reveals.forEach((el) => observer.observe(el));
 } else {
     reveals.forEach((el) => el.classList.add('zichtbaar'));
-}
-
-const formulier = document.getElementById('contact-formulier');
-const melding = document.getElementById('formulier-melding');
-if (formulier && melding) {
-    formulier.addEventListener('submit', (event) => {
-        event.preventDefault();
-        melding.hidden = false;
-        formulier.reset();
-    });
 }
