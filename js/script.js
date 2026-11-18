@@ -34,14 +34,35 @@ if (audio && audioKnop) {
         }
     });
     audio.addEventListener('play', () => {
-        audioKnop.textContent = '⏸ Pauzeer VERT_DF2';
+        audioKnop.textContent = '⏸ Pauzeer de stem';
     });
     audio.addEventListener('pause', () => {
-        audioKnop.textContent = '▶ Speel VERT_DF2 af';
+        audioKnop.textContent = '▶ Speel de stem af';
     });
     audio.addEventListener('ended', () => {
-        audioKnop.textContent = '▶ Speel VERT_DF2 af';
+        audioKnop.textContent = '▶ Speel de stem af';
     });
+}
+
+const fluisterEl = document.getElementById('fluistering');
+if (fluisterEl) {
+    const fluisteringen = [
+        'je hoort het niet… maar het hoort jou',
+        'tel de klokken niet verder dan zeven',
+        'het masker kijkt terug',
+        'de afgrond luistert mee',
+        'er is een achtste klok',
+        'niet alle duisternis is kwaadaardig — en niet al het licht verdient te overleven'
+    ];
+    let index = Math.floor(Math.random() * fluisteringen.length);
+    const toonFluistering = () => {
+        fluisterEl.textContent = fluisteringen[index];
+        fluisterEl.classList.add('zichtbaar');
+        setTimeout(() => fluisterEl.classList.remove('zichtbaar'), 4200);
+        index = (index + 1) % fluisteringen.length;
+    };
+    setTimeout(toonFluistering, 6000);
+    setInterval(toonFluistering, 19000);
 }
 
 const reveals = document.querySelectorAll('.reveal');
