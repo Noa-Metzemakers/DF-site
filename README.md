@@ -13,7 +13,14 @@ Statische HTML/CSS/JS, geen build step.
 - 3D-game: WASD / pijltjes — bewegen · muis slepen — camera · spatie of klik — aanval · shift — rennen · E — praten · F of ⛶-knop — fullscreen · op touch: joystick + knoppen
 
 ## Assets
-`assets/` komt uit DF-site: de bewegende achtergronden (`assets/bg/`), de personage-afbeeldingen (`assets/img/`, o.a. Grimwick en het gouden masker van Varynth als NPC-portretten) en de ambient audio `assets/audio/VERT_DF2.flac` ("de stem van de afgrond").
+`assets/` komt uit DF-site: de bewegende achtergronden (`assets/bg/`), de personage-afbeeldingen (`assets/img/`, o.a. Grimwick en het gouden masker van Varynth als portretten in de dialoogvensters) en de ambient audio `assets/audio/VERT_DF2.flac` ("de stem van de afgrond").
+
+## Eigen 3D-modellen (optioneel)
+NPC's, vijanden en de boss zijn standaard procedurale 3D-figuren. Wil je echte 3D-modellen (bijv. gemaakt van een personage-foto met Meshy/Tripo/CSM — export als **GLB**), plaats ze dan als:
+- `assets/models/grimwick.glb`, `varynth.glb`, `malthor.glb`, `twin.glb`, `trio.glb` (NPC's)
+- `assets/models/malagor.glb` (boss)
+
+De game laadt ze automatisch (GLTFLoader via CDN) en verbergt dan het standaardfiguur. Zonder GLB blijft het procedurale figuur actief.
 
 ## Lokaal draaien
 `python3 -m http.server 8000` → `http://localhost:8000`

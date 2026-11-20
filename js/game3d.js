@@ -66,6 +66,180 @@ let ambient = null;
 let tijdAcc = 0;
 let tTot = 0;
 
+let GLTFLoader = null;
+const loadersKlaar = (async () => {
+    try {
+        const mod = await import('three/addons/loaders/GLTFLoader.js');
+        GLTFLoader = mod.GLTFLoader || null;
+    } catch (e) {
+        GLTFLoader = null;
+    }
+})();
+
+function laadModel(groep, verberg, pad, schaal) {
+    if (!GLTFLoader) return;
+    try {
+        new GLTFLoader().load(pad, (gltf) => {
+            const m = gltf.scene;
+            m.scale.setScalar(schaal || 1);
+            if (verberg) verberg.visible = false;
+            groep.add(m);
+        }, undefined, () => {});
+    } catch (e) {
+        return;
+    }
+}
+
+function maakPoppetje(opts) {
+    const g = new THREE.Group();
+    const mantel = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.6, 8), new THREE.MeshLambertMaterial({ color: opts.mantel }));
+    mantel.position.y = 0.8;
+    mantel.rotation.x = Math.PI;
+    g.add(mantel);
+    const lijf = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.6, 4, 8), new THREE.MeshLambertMaterial({ color: opts.lijf || opts.mantel }));
+    lijf.position.y = 1.0;
+    g.add(lijf);
+    const hoofd = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 10), new THREE.MeshLambertMaterial({ color: opts.huid }));
+    hoofd.position.y = 1.62;
+    g.add(hoofd);
+    [-0.32, 0.32].forEach((x) => {
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.8, 6), new THREE.MeshLambertMaterial({ color: opts.mantel }));
+        arm.position.set(x, 1.1, 0);
+        arm.rotation.z = x > 0 ? -0.3 : 0.3;
+        g.add(arm);
+    });
+    if (opts.extra) opts.extra(g);
+    return g;
+}
+
+function maakNpcFigura(id) {
+    if (id === 'grimwick') {
+        return maakPoppetje({
+            huid: 0x6a8f4f,
+            mantel: 0x3a2f1d,
+            extra: (g) => {
+                [-0.22, 0.22].forEach((x) => {
+                    const oor = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.3, 6), new THREE.MeshLambertMaterial({ color: 0x6a8f4f }));
+                    oor.position.set(x, 1.66, 0);
+                    oor.rotation.z = x > 0 ? -0.7 : 0.7;
+                    g.add(oor);
+                });
+                const ketel = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.28, 0.5, 10), new THREE.MeshLambertMaterial({ color: 0x14161c }));
+                ketel.position.set(0.75, 0.25, 0.3);
+                g.add(ketel);
+            }
+        });
+    }
+    if (id === 'varynth') {
+        const g = maakPoppetje({ huid: 0x14141f, mantel: 0x0c0c14 });
+        g.scale.setScalar(1.25);
+        const masker = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.4, 0.08), new THREE.MeshBasicMaterial({ color: 0xd4af37 }));
+        masker.position.set(0, 1.62, 0.18);
+        g.add(masker);
+        const kap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.5, 8), new THREE.MeshLambertMaterial({ color: 0x08080e }));
+        kap.position.y = 1.95;
+        g.add(kap);
+        return g;
+    }
+    if (id === 'malthor') {
+        const oogMat = new THREE.MeshBasicMaterial({ color: 0xffaa33 });
+        const g = maakPoppetje({
+            huid: 0x2a2438,
+            mantel: 0x1a1030,
+            extra: (gg) => {
+                [-0.08, 0.08].forEach((x) => {
+                    const oog = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), oogMat);
+                    oog.position.set(x, 1.64, 0.18);
+                    gg.add(oog);
+                });
+                const paard = new THREE.Group();
+                const lijfP = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.6, 0.5), new THREE.MeshLambertMaterial({ color: 0x0d0a14 }));
+                lijfP.position.y = 0.9;
+                paard.add(lijfP);
+                const kopP = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.5), new THREE.MeshLambertMaterial({ color: 0x0d0a14 }));
+                kopP.position.set(0.85, 1.15, 0);
+                paard.add(kopP);
+                const oogP = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 6), oogMat);
+                oogP.position.set(1.0, 1.2, 0.15);
+                paard.add(oogP);
+                [[-0.5, 0.2], [0.5, 0.2], [-0.5, -0.2], [0.5, -0.2]].forEach((p) => {
+                    const been = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.9, 6), new THREE.MeshLambertMaterial({ color: 0x0d0a14 }));
+                    been.position.set(p[0], 0.45, p[1]);
+                    paard.add(been);
+                });
+                paard.position.set(1.3, 0, 0.6);
+                gg.add(paard);
+            }
+        });
+        return g;
+    }
+    if (id === 'twin') {
+        const g = new THREE.Group();
+        [-0.7, 0.7].forEach((x) => {
+            const f = maakPoppetje({ huid: 0x9fc2e8, mantel: 0x274b6d });
+            f.children.forEach((c) => {
+                if (c.material) {
+                    c.material.transparent = true;
+                    c.material.opacity = 0.8;
+                }
+            });
+            f.position.set(x, 0.35, 0);
+            g.add(f);
+        });
+        return g;
+    }
+    if (id === 'trio') {
+        const g = new THREE.Group();
+        [-0.7, 0, 0.7].forEach((x) => {
+            const f = maakPoppetje({ huid: 0xd8c9a8, mantel: 0x4a2f3a });
+            f.scale.setScalar(0.85);
+            f.position.set(x, 0, 0);
+            g.add(f);
+        });
+        const tafel = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.08, 0.9), new THREE.MeshLambertMaterial({ color: 0x2a2018 }));
+        tafel.position.set(0, 0.75, 0.6);
+        g.add(tafel);
+        const kaars = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffb84d }));
+        kaars.position.set(0, 0.9, 0.6);
+        g.add(kaars);
+        return g;
+    }
+    return maakPoppetje({ huid: 0xcfd8e8, mantel: 0x1a1a2e });
+}
+
+function maakSchimMesh(elite) {
+    const s = elite ? 1.5 : 1;
+    const g = new THREE.Group();
+    const mantelMat = new THREE.MeshLambertMaterial({ color: elite ? 0x1a0508 : 0x050508, transparent: true, opacity: 0.92 });
+    const mantel = new THREE.Mesh(new THREE.ConeGeometry(0.45 * s, 1.7 * s, 7), mantelMat);
+    mantel.position.y = 0.95 * s;
+    g.add(mantel);
+    const kap = new THREE.Mesh(new THREE.SphereGeometry(0.24 * s, 8, 8), new THREE.MeshLambertMaterial({ color: 0x0a0a12 }));
+    kap.position.y = 1.9 * s;
+    g.add(kap);
+    [-0.4, 0.4].forEach((x) => {
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.05 * s, 0.04 * s, 0.9 * s, 6), mantelMat);
+        arm.position.set(x * s, 1.15 * s, 0);
+        arm.rotation.z = x > 0 ? -0.5 : 0.5;
+        g.add(arm);
+    });
+    const oogMat = new THREE.MeshBasicMaterial({ color: elite ? 0xff3311 : 0xff2222 });
+    [-0.08, 0.08].forEach((ox) => {
+        const oog = new THREE.Mesh(new THREE.SphereGeometry(elite ? 0.07 : 0.045, 6, 6), oogMat);
+        oog.position.set(ox * s, 1.92 * s, 0.2 * s);
+        g.add(oog);
+    });
+    if (elite) {
+        [-0.12, 0.12].forEach((x) => {
+            const hoorn = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.35, 6), new THREE.MeshLambertMaterial({ color: 0x2a0a0a }));
+            hoorn.position.set(x, 2.15 * s, 0);
+            hoorn.rotation.z = x > 0 ? -0.4 : 0.4;
+            g.add(hoorn);
+        });
+    }
+    return g;
+}
+
 function laadTextuur(pad) {
     if (typeof Image === 'undefined') return null;
     const t = new THREE.TextureLoader().load(pad);
@@ -167,22 +341,16 @@ function maakNpc(id, naam, x, z, portretPad, lichtKleur) {
     const sokkel = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.3, 0.4), new THREE.MeshLambertMaterial({ color: 0x1c2333 }));
     sokkel.position.y = 0.65;
     groep.add(sokkel);
-    const frame = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 2.6), new THREE.MeshBasicMaterial({ color: 0xd4af37 }));
-    frame.position.set(0, 2.6, 0.22);
-    groep.add(frame);
-    const portret = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.9, 2.4),
-        new THREE.MeshBasicMaterial({ map: laadTextuur(portretPad), color: 0xffffff })
-    );
-    portret.position.set(0, 2.6, 0.24);
-    groep.add(portret);
+    const figuur = maakNpcFigura(id);
+    figuur.position.y = 1.3;
+    groep.add(figuur);
     const licht = new THREE.PointLight(lichtKleur, 1.3, 9);
     licht.position.set(0, 3, 0.6);
     groep.add(licht);
     groep.position.set(x, 0, z);
     scene.add(groep);
     plaatsBlob(x, z, 0.9);
-    return { id, naam, x, z, groep, portret, portretPad, licht, seed: Math.random() * 10 };
+    return { id, naam, x, z, groep, figuur, portretPad, licht, seed: Math.random() * 10 };
 }
 
 function maakBoss() {
@@ -203,6 +371,14 @@ function maakBoss() {
     kroon.position.y = 4.05;
     kroon.rotation.x = Math.PI / 2;
     g.add(kroon);
+    const masker = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, 0.1), new THREE.MeshBasicMaterial({ color: 0x8f1d1d }));
+    masker.position.set(0, 3.72, 0.3);
+    g.add(masker);
+    [-0.55, 0.55].forEach((x) => {
+        const schouder = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), new THREE.MeshLambertMaterial({ color: 0x11111c }));
+        schouder.position.set(x, 3.1, 0);
+        g.add(schouder);
+    });
     g.position.set(TROON.x, 0.6, TROON.z - 1.5);
     scene.add(g);
     plaatsBlob(TROON.x, TROON.z - 1.5, 1.3);
@@ -212,22 +388,7 @@ function maakBoss() {
 function spawneVijand(x, z, type) {
     const elite = type === 'bloedschim';
     const s = elite ? 1.5 : 1;
-    const g = new THREE.Group();
-    const lijf = new THREE.Mesh(
-        new THREE.ConeGeometry(0.45 * s, 1.7 * s, 7),
-        new THREE.MeshLambertMaterial({ color: elite ? 0x1a0508 : 0x050508, transparent: true, opacity: 0.92 })
-    );
-    lijf.position.y = 0.95 * s;
-    g.add(lijf);
-    const hoofd = new THREE.Mesh(new THREE.SphereGeometry(0.2 * s, 8, 8), new THREE.MeshLambertMaterial({ color: 0x0a0a12 }));
-    hoofd.position.y = 1.95 * s;
-    g.add(hoofd);
-    const oogMat = new THREE.MeshBasicMaterial({ color: elite ? 0xff3311 : 0xff2222 });
-    [-0.08, 0.08].forEach((ox) => {
-        const oog = new THREE.Mesh(new THREE.SphereGeometry((elite ? 0.07 : 0.045), 6, 6), oogMat);
-        oog.position.set(ox * s, 1.98 * s, 0.16 * s);
-        g.add(oog);
-    });
+    const g = maakSchimMesh(elite);
     g.position.set(x, 0, z);
     scene.add(g);
     plaatsBlob(x, z, 0.5 * s);
@@ -1073,7 +1234,7 @@ function visuals(dt) {
         if (t.licht) t.licht.intensity = 1.3 * f;
     });
     world.npcs.forEach((n) => {
-        n.portret.position.y = 2.6 + Math.sin(tTot * 1.5 + n.seed) * 0.06;
+        n.figuur.position.y = 1.3 + Math.sin(tTot * 1.5 + n.seed) * 0.06;
         n.licht.intensity = 1.2 + Math.sin(tTot * 3 + n.seed) * 0.25;
     });
     const b = world.boss;
@@ -1291,6 +1452,11 @@ function bindInvoer() {
 
 function init() {
     bouwWereld();
+    loadersKlaar.then(() => {
+        if (!GLTFLoader || !world) return;
+        world.npcs.forEach((n) => laadModel(n.groep, n.figuur, 'assets/models/' + n.id + '.glb', 1));
+        if (world.boss) laadModel(world.boss.mesh, world.boss.mesh, 'assets/models/malagor.glb', 1);
+    });
     const stage = $('game3d-stage');
     const w = (stage && stage.clientWidth) || 960;
     const h = (stage && stage.clientHeight) || 540;
