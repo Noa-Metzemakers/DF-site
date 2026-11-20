@@ -9,6 +9,7 @@ eindeloos bewegende edits, de audio en het universum rond **Varynth, de Bewaker 
 - `personages.html` — **Personages**: Grimwick, Malthor, Thaerion, de Twin Echoes of Velen, het Waxen Trio (Morva, Vola & Zelyth), Malagor (hoofdschurk), Drakhor, Keldrin (hoofdpersonage) — met afbeelding, geheim, relaties en signature quote
 - `koninkrijken.html` — **Koninkrijken & facties** met Varynth als rode draad
 - `legendes.html` — **Vier legendes** in fluisterverhaal-stijl
+- `spel.html` — **Het Pad van Keldrin**: interactief kies-je-pad spel (`js/spel.js`) waarin je als Keldrin door het universum reist — met een balans-meter (duisternis ↔ licht), herinneringen die je kunt verliezen, verborgen keuzes en meerdere (geheime) einden
 
 ## Assets
 - `assets/bg/` — animated webp's, loop-count op `0` = oneindig (geverifieerd met libwebp): `VERT_DF2-1`, `VERT_DF2-2`, `malagor-walk`, `trio-play`
