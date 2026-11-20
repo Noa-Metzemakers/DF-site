@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ABYSSA 3D — De Vijf Relikwieën: een 3D-avontuur in het Afgrondkoninkrijk. Speel als Keldrin, verzamel de relikwieën, spreek Varynth aan en versla Malagor op de gebroken troon.">
+    <title>ABYSSA 3D — De Vijf Relikwieën — ABYSSA</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="achtergrond" aria-hidden="true">
+        <div class="achtergrond-laag actief"><img src="assets/bg/VERT_DF2-1.webp" alt=""></div>
+        <div class="achtergrond-laag"><img src="assets/bg/malagor-walk.webp" alt=""></div>
+        <div class="achtergrond-overlay"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+    <p class="fluistering" id="fluistering" aria-hidden="true"></p>
+
+    <header class="site-header">
+        <a class="logo" href="index.html">ABYSSA</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu openen" aria-expanded="false">&#9776;</button>
+        <nav class="site-nav" id="site-nav">
+            <ul>
+                <li><a href="index.html">Proloog</a></li>
+                <li><a href="varynth.html">Varynth</a></li>
+                <li><a href="personages.html">Personages</a></li>
+                <li><a href="koninkrijken.html">Koninkrijken</a></li>
+                <li><a href="legendes.html">Legendes</a></li>
+                <li><a href="spel.html">Spel</a></li>
+                <li><a href="game3d.html">3D-game</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="pagina-hero">
+            <p class="hero-kicker">een 3D-avontuur in het donker</p>
+            <h1>De Vijf Relikwieën</h1>
+            <p class="hero-tag">
+                Jij bent Keldrin. Malagor verzamelt relikwieën om zijn ritueel op de gebroken troon
+                te voltooien — en de wereld in steen en as te veranderen. Verzamel de vijf relikwieën,
+                spreek Varynth aan bij de poort en versla de gebroken koning.
+            </p>
+        </section>
+
+        <section class="sectie" id="game3d">
+            <div class="game3d-stage" id="game3d-stage">
+                <div class="game3d-canvas" id="game3d-canvas"></div>
+
+                <div class="game3d-hud" id="game3d-hud">
+                    <div class="hud-top">
+                        <div class="hud-quest" id="hud-quest"></div>
+                        <div class="hud-stats">
+                            <div class="hud-relikwieen" id="hud-relikwieen" title="Relikwieën">✦ 0/5</div>
+                            <div class="hud-levens">
+                                <span class="hud-label">Levens</span>
+                                <div class="hud-levens-bar"><div class="hud-levens-fill" id="hud-levens-fill"></div></div>
+                            </div>
+                            <div class="hud-tijd" id="hud-tijd">00:00</div>
+                        </div>
+                    </div>
+                    <div class="hud-melding" id="hud-melding" hidden></div>
+                    <div class="hud-npc" id="hud-npc" hidden></div>
+                    <div class="hud-hint">WASD / pijltjes — bewegen &middot; muis slepen — camera &middot; spatie / klik — aanval &middot; shift — rennen &middot; E — praten</div>
+
+                    <div class="hud-dialoog" id="hud-dialoog" hidden>
+                        <img id="hud-dialoog-img" src="" alt="">
+                        <div class="hud-dialoog-tekst">
+                            <p class="hud-dialoog-naam" id="hud-dialoog-naam"></p>
+                            <p class="hud-dialoog-zin" id="hud-dialoog-zin"></p>
+                            <button class="knop knop-primair" id="hud-dialoog-volgende" type="button">Volgende &rarr;</button>
+                        </div>
+                    </div>
+
+                    <div class="hud-bericht" id="hud-bericht" hidden>
+                        <h2 id="hud-bericht-titel"></h2>
+                        <p id="hud-bericht-tekst"></p>
+                        <button class="knop knop-goud" id="hud-bericht-knop" type="button">Opnieuw beginnen</button>
+                    </div>
+                </div>
+
+                <div class="game3d-touch" id="game3d-touch" hidden>
+                    <div class="touch-joystick" id="touch-joystick"><div class="touch-joystick-knop" id="touch-knop"></div></div>
+                    <div class="touch-knoppen">
+                        <button id="touch-aanval" type="button" aria-label="Aanval">&#9876;</button>
+                        <button id="touch-praten" type="button" aria-label="Praten">E</button>
+                    </div>
+                </div>
+
+                <div class="game3d-start" id="game3d-start">
+                    <p class="hero-kicker">speel als Keldrin, de reiziger</p>
+                    <h2>De Vijf Relikwieën van de Afgrond</h2>
+                    <p>
+                        In een mistig nachtlandschap liggen vijf gouden relikwieën verborgen. Verzamel ze,
+                        laat Grimwick je bij de herberg genezen, breek de eed van het water bij Varynth
+                        en daag Malagor uit op de gebroken troon. Schimmen zwerven tussen de bomen —
+                        een slag van je zwaard jaagt ze uiteen.
+                    </p>
+                    <p class="game3d-controles">
+                        WASD / pijltjes — bewegen &middot; muis slepen — camera &middot; spatie of klik — aanval
+                        &middot; shift — rennen &middot; E — praten met personages
+                    </p>
+                    <button class="knop knop-goud" id="game3d-start-knop" type="button">Begin het avontuur</button>
+                    <p class="game3d-fout" id="game3d-fout" hidden></p>
+                </div>
+            </div>
+            <p class="spel-nb">
+                Werkt in Chrome, Edge en Firefox (WebGL vereist). Tip: verzamel eerst alle relikwieën
+                voordat je de poort van de troonzaal nadert.
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; <span id="jaar"></span> Noa Metzemakers &middot; ABYSSA &mdash; opgenomen in het donker</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script type="importmap">
+        { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+    </script>
+    <script type="module" src="js/game3d.js"></script>
+    <script>
+        setTimeout(function () {
+            if (!window.__ABYSSA3D) {
+                var f = document.getElementById('game3d-fout');
+                if (f) {
+                    f.hidden = false;
+                    f.textContent = 'Kon de 3D-engine (Three.js via CDN) niet laden — controleer je internetverbinding en ververs de pagina.';
+                }
+            }
+        }, 7000);
+    </script>
+</body>
+</html>
