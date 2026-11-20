@@ -76,18 +76,27 @@ const loadersKlaar = (async () => {
     }
 })();
 
-function laadModel(groep, verberg, pad, schaal) {
+const MODEL_INSTELLINGEN = { grimwick: 1, varynth: 1, malthor: 1, twin: 1, trio: 1, malagor: 1 };
+
+function laadModelMetFallback(groep, verberg, id) {
     if (!GLTFLoader) return;
-    try {
-        new GLTFLoader().load(pad, (gltf) => {
-            const m = gltf.scene;
-            m.scale.setScalar(schaal || 1);
-            if (verberg) verberg.visible = false;
-            groep.add(m);
-        }, undefined, () => {});
-    } catch (e) {
-        return;
-    }
+    const cap = id.charAt(0).toUpperCase() + id.slice(1);
+    const paden = ['assets/models/' + id + '.glb', 'assets/models/' + cap + '.glb'];
+    const schaal = MODEL_INSTELLINGEN[id] || 1;
+    const probeer = (i) => {
+        if (i >= paden.length) return;
+        try {
+            new GLTFLoader().load(paden[i], (gltf) => {
+                const m = gltf.scene;
+                m.scale.setScalar(schaal);
+                if (verberg) verberg.visible = false;
+                groep.add(m);
+            }, undefined, () => probeer(i + 1));
+        } catch (e) {
+            probeer(i + 1);
+        }
+    };
+    probeer(0);
 }
 
 function maakPoppetje(opts) {
@@ -1454,8 +1463,8 @@ function init() {
     bouwWereld();
     loadersKlaar.then(() => {
         if (!GLTFLoader || !world) return;
-        world.npcs.forEach((n) => laadModel(n.groep, n.figuur, 'assets/models/' + n.id + '.glb', 1));
-        if (world.boss) laadModel(world.boss.mesh, world.boss.mesh, 'assets/models/malagor.glb', 1);
+        world.npcs.forEach((n) => laadModelMetFallback(n.groep, n.figuur, n.id));
+        if (world.boss) laadModelMetFallback(world.boss.mesh, world.boss.mesh, 'malagor');
     });
     const stage = $('game3d-stage');
     const w = (stage && stage.clientWidth) || 960;
