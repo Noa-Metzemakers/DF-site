@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Het Pad van Keldrin — een interactief dark-fantasy spel in het universum van ABYSSA. Jij bent de reiziger wier naam is uitgewist; elke keuze bepaalt aan welke kant van de Afgrond jij staat.">
+    <title>Het Pad van Keldrin — ABYSSA</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="achtergrond" aria-hidden="true">
+        <div class="achtergrond-laag actief"><img src="assets/bg/VERT_DF2-2.webp" alt=""></div>
+        <div class="achtergrond-laag"><img src="assets/bg/trio-play.webp" alt=""></div>
+        <div class="achtergrond-overlay"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+    <p class="fluistering" id="fluistering" aria-hidden="true"></p>
+
+    <header class="site-header">
+        <a class="logo" href="index.html">ABYSSA</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu openen" aria-expanded="false">&#9776;</button>
+        <nav class="site-nav" id="site-nav">
+            <ul>
+                <li><a href="index.html">Proloog</a></li>
+                <li><a href="varynth.html">Varynth</a></li>
+                <li><a href="personages.html">Personages</a></li>
+                <li><a href="koninkrijken.html">Koninkrijken</a></li>
+                <li><a href="legendes.html">Legendes</a></li>
+                <li><a href="spel.html">Spel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="pagina-hero">
+            <p class="hero-kicker">een interactieve kroniek</p>
+            <h1>Het Pad van Keldrin</h1>
+            <p class="hero-tag">
+                Jij bent Keldrin, de reiziger wier naam is uitgewist. Elke keuze die je maakt, kantelt
+                de balans tussen licht en duisternis — en sommige keuzes kosten een herinnering.
+                Er zijn meerdere einden. Sommige fluister je pas als je ze verdient.
+            </p>
+        </section>
+
+        <section class="sectie" id="spel">
+            <div class="spel-venster" id="spel-venster">
+                <div class="spel-status">
+                    <div class="spel-meter">
+                        <span class="spel-meter-label">Balans</span>
+                        <div class="spel-balans-bar" id="spel-balans-bar">
+                            <span class="spel-balans-wijzer" id="spel-balans-wijzer"></span>
+                        </div>
+                        <span class="spel-meter-uiteinden"><span>duisternis</span><span>licht</span></span>
+                    </div>
+                    <div class="spel-geheugen">
+                        <span class="spel-meter-label">Geheugen</span>
+                        <span class="spel-geheugen-sterren" id="spel-geheugen-sterren"></span>
+                    </div>
+                </div>
+
+                <figure class="spel-beeld" id="spel-beeld" hidden>
+                    <img id="spel-afbeelding" src="" alt="">
+                    <figcaption id="spel-beeldcaption"></figcaption>
+                </figure>
+
+                <p class="sectie-kicker" id="spel-kicker"></p>
+                <h2 id="spel-titel"></h2>
+                <div class="spel-tekst" id="spel-tekst" aria-live="polite"></div>
+                <p class="spel-wijziging" id="spel-wijziging" aria-live="polite"></p>
+                <div class="spel-keuzes" id="spel-keuzes"></div>
+
+                <p class="spel-samenvatting" id="spel-samenvatting" hidden></p>
+                <div class="spel-einde-acties" id="spel-acties" hidden>
+                    <button class="knop knop-goud" id="spel-opnieuw" type="button">Speel opnieuw</button>
+                    <a class="knop knop-primair" href="index.html">Terug naar de proloog</a>
+                </div>
+            </div>
+            <p class="spel-nb">
+                Tip: sommige keuzes verschijnen alleen als je de juiste dingen hebt gezien of gevraagd.
+                Sommige einden zijn geheim. Lees de legendes niet hardop.
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; <span id="jaar"></span> Noa Metzemakers &middot; ABYSSA &mdash; opgenomen in het donker</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/spel.js"></script>
+</body>
+</html>
