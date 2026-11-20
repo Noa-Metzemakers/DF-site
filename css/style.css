@@ -1525,3 +1525,32 @@ main {
         height: 66px;
     }
 }
+
+.hud-fullscreen {
+    pointer-events: auto;
+    align-self: flex-end;
+    background: rgba(4, 5, 9, 0.65);
+    border: 1px solid var(--lijn);
+    border-radius: 999px;
+    color: var(--goud-helder);
+    padding: 0.3rem 0.8rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.hud-fullscreen:hover {
+    border-color: var(--goud);
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+}
+
+.game3d-stage:fullscreen {
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}

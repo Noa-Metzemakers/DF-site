@@ -10,7 +10,7 @@ Statische HTML/CSS/JS, geen build step.
 
 ## Besturing
 - Tekstspel: klik door het verhaal en kies
-- 3D-game: WASD / pijltjes — bewegen · muis slepen — camera · spatie of klik — aanval · shift — rennen · E — praten · op touch: joystick + knoppen
+- 3D-game: WASD / pijltjes — bewegen · muis slepen — camera · spatie of klik — aanval · shift — rennen · E — praten · F of ⛶-knop — fullscreen · op touch: joystick + knoppen
 
 ## Assets
 `assets/` komt uit DF-site: de bewegende achtergronden (`assets/bg/`), de personage-afbeeldingen (`assets/img/`, o.a. Grimwick en het gouden masker van Varynth als NPC-portretten) en de ambient audio `assets/audio/VERT_DF2.flac` ("de stem van de afgrond").

@@ -27,6 +27,7 @@ const state = {
     mode: 'start',
     hp: 100,
     maxHp: 100,
+    zwaardSchade: 15,
     relikwieen: 0,
     relikwieenTotaal: RELIKWIE_POS.length,
     quest: 0,
@@ -42,7 +43,7 @@ const input = { f: false, b: false, l: false, r: false, sprint: false, aanval: f
 let renderer = null;
 let scene = null;
 let camera = null;
-const cam = { yaw: 0, pitch: 0.35 };
+const cam = { yaw: 0, pitch: 0.28 };
 
 const speler = {
     pos: new THREE.Vector3(0, 0, 30),
@@ -79,10 +80,10 @@ function maakGrondTextuur() {
         c.height = 256;
         const ctx = c.getContext('2d');
         if (!ctx) return null;
-        ctx.fillStyle = '#10182b';
+        ctx.fillStyle = '#1c2745';
         ctx.fillRect(0, 0, 256, 256);
         for (let i = 0; i < 2600; i++) {
-            ctx.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,0.25)' : 'rgba(120,140,180,0.06)';
+            ctx.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,0.18)' : 'rgba(150,170,210,0.10)';
             ctx.fillRect(Math.random() * 256, Math.random() * 256, 2, 2);
         }
         for (let i = 0; i < 26; i++) {
@@ -128,16 +129,22 @@ function plaatsBlob(x, z, r) {
 
 function maakSpelerMesh() {
     const g = new THREE.Group();
-    const mantel = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.5, 8), new THREE.MeshLambertMaterial({ color: 0x0a0a12 }));
+    const mantel = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.5, 8), new THREE.MeshLambertMaterial({ color: 0x181826 }));
     mantel.position.y = 0.75;
     mantel.rotation.x = Math.PI;
     g.add(mantel);
-    const lijf = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 0.75, 4, 8), new THREE.MeshLambertMaterial({ color: 0x1a1a2e }));
+    const lijf = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 0.75, 4, 8), new THREE.MeshLambertMaterial({ color: 0x2c2c4a, emissive: 0x0d0d18 }));
     lijf.position.y = 1.0;
     g.add(lijf);
-    const kap = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 10), new THREE.MeshLambertMaterial({ color: 0x14141f }));
+    const kap = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 10), new THREE.MeshLambertMaterial({ color: 0x232338, emissive: 0x0a0a12 }));
     kap.position.y = 1.72;
     g.add(kap);
+    const bies = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.06), new THREE.MeshBasicMaterial({ color: 0xd4af37 }));
+    bies.position.set(0, 1.35, 0.3);
+    g.add(bies);
+    const lamp = new THREE.PointLight(0xffe2b0, 1.3, 12);
+    lamp.position.set(0, 2.3, 0);
+    g.add(lamp);
     const zwaard = new THREE.Group();
     const lemmet = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.05, 0.02), new THREE.MeshBasicMaterial({ color: 0xd4af37 }));
     lemmet.position.y = 0.55;
@@ -202,27 +209,36 @@ function maakBoss() {
     return { mesh: g, hp: 150, maxHp: 150, cool: 0, summonT: 8, seed: 0 };
 }
 
-function spawneVijand(x, z) {
+function spawneVijand(x, z, type) {
+    const elite = type === 'bloedschim';
+    const s = elite ? 1.5 : 1;
     const g = new THREE.Group();
-    const lijf = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.7, 7), new THREE.MeshLambertMaterial({ color: 0x050508, transparent: true, opacity: 0.92 }));
-    lijf.position.y = 0.95;
+    const lijf = new THREE.Mesh(
+        new THREE.ConeGeometry(0.45 * s, 1.7 * s, 7),
+        new THREE.MeshLambertMaterial({ color: elite ? 0x1a0508 : 0x050508, transparent: true, opacity: 0.92 })
+    );
+    lijf.position.y = 0.95 * s;
     g.add(lijf);
-    const hoofd = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), new THREE.MeshLambertMaterial({ color: 0x0a0a12 }));
-    hoofd.position.y = 1.95;
+    const hoofd = new THREE.Mesh(new THREE.SphereGeometry(0.2 * s, 8, 8), new THREE.MeshLambertMaterial({ color: 0x0a0a12 }));
+    hoofd.position.y = 1.95 * s;
     g.add(hoofd);
-    const oogMat = new THREE.MeshBasicMaterial({ color: 0xff2222 });
+    const oogMat = new THREE.MeshBasicMaterial({ color: elite ? 0xff3311 : 0xff2222 });
     [-0.08, 0.08].forEach((ox) => {
-        const oog = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 6), oogMat);
-        oog.position.set(ox, 1.98, 0.16);
+        const oog = new THREE.Mesh(new THREE.SphereGeometry((elite ? 0.07 : 0.045), 6, 6), oogMat);
+        oog.position.set(ox * s, 1.98 * s, 0.16 * s);
         g.add(oog);
     });
     g.position.set(x, 0, z);
     scene.add(g);
-    plaatsBlob(x, z, 0.5);
+    plaatsBlob(x, z, 0.5 * s);
     const v = {
         mesh: g,
-        hp: 30,
-        maxHp: 30,
+        type: type || 'schim',
+        hp: elite ? 55 : 30,
+        maxHp: elite ? 55 : 30,
+        dmg: elite ? 12 : 8,
+        snelheidJacht: elite ? 3.0 : 3.4,
+        snelheidZwerf: elite ? 1.3 : 1.6,
         cool: 0,
         doel: { x: KANS(-RAND, RAND), z: KANS(-RAND, RAND) },
         doelT: 0,
@@ -234,13 +250,14 @@ function spawneVijand(x, z) {
 
 function bouwWereld() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x040509);
-    scene.fog = new THREE.FogExp2(0x0a1128, 0.03);
+    scene.background = new THREE.Color(0x070b18);
+    scene.fog = new THREE.FogExp2(0x131c36, 0.02);
 
     camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.1, 600);
 
-    scene.add(new THREE.HemisphereLight(0x1a1a2e, 0x040509, 0.75));
-    const maanLicht = new THREE.DirectionalLight(0x9fc2e8, 0.4);
+    scene.add(new THREE.HemisphereLight(0x2a3a66, 0x0a0d18, 1.25));
+    scene.add(new THREE.AmbientLight(0x223355, 0.55));
+    const maanLicht = new THREE.DirectionalLight(0x9fc2e8, 0.7);
     maanLicht.position.set(-60, 90, -120);
     scene.add(maanLicht);
 
@@ -253,7 +270,7 @@ function bouwWereld() {
     }
     const sterGeo = new THREE.BufferGeometry();
     sterGeo.setAttribute('position', new THREE.Float32BufferAttribute(sterPos, 3));
-    scene.add(new THREE.Points(sterGeo, new THREE.PointsMaterial({ color: 0xcfd8e8, size: 1.6, sizeAttenuation: false, fog: false })));
+    scene.add(new THREE.Points(sterGeo, new THREE.PointsMaterial({ color: 0xcfd8e8, size: 2.2, sizeAttenuation: false, fog: false })));
 
     const maan = new THREE.Mesh(new THREE.CircleGeometry(16, 32), new THREE.MeshBasicMaterial({ color: 0xcfd8e8, fog: false }));
     maan.position.set(-150, 160, -330);
@@ -263,14 +280,14 @@ function bouwWereld() {
     const grondTex = maakGrondTextuur();
     const grondMat = grondTex
         ? new THREE.MeshLambertMaterial({ map: grondTex, color: 0xffffff })
-        : new THREE.MeshLambertMaterial({ color: 0x141b2d });
+        : new THREE.MeshLambertMaterial({ color: 0x24304e });
     const grond = new THREE.Mesh(new THREE.PlaneGeometry(WERELD + 40, WERELD + 40), grondMat);
     grond.rotation.x = -Math.PI / 2;
     scene.add(grond);
 
     world = { obstakels: [], relikwieen: [], torches: [], npcs: [], barriereMesh: [], boss: null, roodLicht: null, poortMeldingGedaan: false };
 
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 44; i++) {
         const x = KANS(-RAND, RAND);
         const z = KANS(-RAND, RAND);
         if (Math.hypot(x - TROON.x, z - TROON.z) < 16) continue;
@@ -278,6 +295,10 @@ function bouwWereld() {
         if (RELIKWIE_POS.some((p) => Math.hypot(x - p[0], z - p[1]) < 5)) continue;
         if (Math.hypot(x + 45, z - 25) < 9) continue;
         if (Math.abs(z - POORT_Z) < 6 && Math.abs(x) < 8) continue;
+        if (Math.hypot(x + 62, z + 55) < 13) continue;
+        if (Math.hypot(x + 20, z + 45) < 9) continue;
+        if (Math.hypot(x - 30, z - 45) < 9) continue;
+        if (Math.hypot(x - 6, z - 8) < 6) continue;
         const boom = new THREE.Group();
         const stam = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.3, 3.4, 6), new THREE.MeshLambertMaterial({ color: 0x0c0c14 }));
         stam.position.y = 1.7;
@@ -293,6 +314,21 @@ function bouwWereld() {
         world.obstakels.push({ x, z, r: 0.55 });
     }
 
+    const struikMat = new THREE.MeshLambertMaterial({ color: 0x14241a });
+    for (let i = 0; i < 22; i++) {
+        const x = KANS(-RAND, RAND);
+        const z = KANS(-RAND, RAND);
+        if (Math.hypot(x - TROON.x, z - TROON.z) < 14) continue;
+        if (Math.hypot(x, z - 30) < 5) continue;
+        if (RELIKWIE_POS.some((p) => Math.hypot(x - p[0], z - p[1]) < 4)) continue;
+        const s = KANS(0.4, 0.9);
+        const struik = new THREE.Mesh(new THREE.SphereGeometry(s, 7, 6), struikMat);
+        struik.position.set(x, s * 0.55, z);
+        struik.scale.y = 0.6;
+        scene.add(struik);
+        plaatsBlob(x, z, s * 0.8);
+    }
+
     for (let i = 0; i < 14; i++) {
         const x = KANS(-RAND, RAND);
         const z = KANS(-RAND, RAND);
@@ -306,6 +342,68 @@ function bouwWereld() {
         plaatsBlob(x, z, s * 0.9);
         world.obstakels.push({ x, z, r: s * 0.8 });
     }
+
+    const steenMat = new THREE.MeshLambertMaterial({ color: 0x2c3654 });
+    const kasteel = new THREE.Group();
+    const muurN = new THREE.Mesh(new THREE.BoxGeometry(18, 3, 0.8), steenMat); muurN.position.set(0, 1.5, -9); kasteel.add(muurN);
+    const muurZ = new THREE.Mesh(new THREE.BoxGeometry(18, 3, 0.8), steenMat); muurZ.position.set(0, 1.5, 9); kasteel.add(muurZ);
+    const muurW = new THREE.Mesh(new THREE.BoxGeometry(0.8, 3, 18), steenMat); muurW.position.set(-9, 1.5, 0); kasteel.add(muurW);
+    const muurO1 = new THREE.Mesh(new THREE.BoxGeometry(0.8, 3, 7), steenMat); muurO1.position.set(9, 1.5, -5.5); kasteel.add(muurO1);
+    const muurO2 = new THREE.Mesh(new THREE.BoxGeometry(0.8, 3, 7), steenMat); muurO2.position.set(9, 1.5, 5.5); kasteel.add(muurO2);
+    [[-9, -9], [9, -9], [-9, 9], [9, 9]].forEach((p) => {
+        const toren = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.4, 7, 8), steenMat);
+        toren.position.set(p[0], 3.5, p[1]);
+        kasteel.add(toren);
+    });
+    const keep = new THREE.Mesh(new THREE.BoxGeometry(6, 4.5, 6), steenMat); keep.position.set(-2, 2.25, -2); kasteel.add(keep);
+    const kasteelDak = new THREE.Mesh(new THREE.ConeGeometry(4.6, 2.6, 4), new THREE.MeshLambertMaterial({ color: 0x1a2138 }));
+    kasteelDak.position.set(-2, 5.8, -2); kasteelDak.rotation.y = Math.PI / 4; kasteel.add(kasteelDak);
+    kasteel.position.set(-62, 0, -55);
+    scene.add(kasteel);
+    plaatsBlob(-62, -55, 11);
+    world.obstakels.push({ x: -62, z: -55, r: 10 });
+    [[-9, -9], [9, -9], [-9, 9], [9, 9]].forEach((p) => world.obstakels.push({ x: -62 + p[0], z: -55 + p[1], r: 1.6 }));
+    [[11.5, -3], [11.5, 3]].forEach((p) => {
+        const paal = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 1.7, 6), new THREE.MeshLambertMaterial({ color: 0x11131c }));
+        paal.position.set(-62 + p[0], 0.85, -55 + p[1]);
+        scene.add(paal);
+        const vlam = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffb84d }));
+        vlam.position.set(-62 + p[0], 1.85, -55 + p[1]);
+        scene.add(vlam);
+        const kl = new THREE.PointLight(0xff9d3c, 1.8, 11);
+        kl.position.set(-62 + p[0], 2.1, -55 + p[1]);
+        scene.add(kl);
+        world.torches.push({ vlam, licht: kl, seed: Math.random() * 10 });
+    });
+
+    const vijver = new THREE.Mesh(new THREE.CircleGeometry(6, 24), new THREE.MeshLambertMaterial({ color: 0x1e3d5c, transparent: true, opacity: 0.9 }));
+    vijver.rotation.x = -Math.PI / 2;
+    vijver.position.set(-20, 0.05, -45);
+    scene.add(vijver);
+    const vijverRand = new THREE.Mesh(new THREE.TorusGeometry(6, 0.35, 8, 24), steenMat);
+    vijverRand.rotation.x = Math.PI / 2;
+    vijverRand.position.set(-20, 0.06, -45);
+    scene.add(vijverRand);
+    plaatsBlob(-20, -45, 5.5);
+    world.obstakels.push({ x: -20, z: -45, r: 5.6 });
+
+    const grot = new THREE.Group();
+    [[-3.2, 0, 2.4], [0, 1.2, 3.0], [3.2, 0, 2.4]].forEach((p) => {
+        const rots = new THREE.Mesh(new THREE.DodecahedronGeometry(p[2], 0), steenMat);
+        rots.position.set(p[0], p[2] * 0.7, p[1]);
+        grot.add(rots);
+    });
+    grot.position.set(30, 0, 45);
+    scene.add(grot);
+    plaatsBlob(30, 45, 3.6);
+    world.obstakels.push({ x: 30, z: 45, r: 3.6 });
+
+    const kruispunt = new THREE.Mesh(new THREE.CircleGeometry(3, 20), steenMat);
+    kruispunt.rotation.x = -Math.PI / 2;
+    kruispunt.position.set(6, 0.04, 8);
+    scene.add(kruispunt);
+    plaatsBlob(6, 8, 1.1);
+    world.obstakels.push({ x: 6, z: 8, r: 1.1 });
 
     const hut = new THREE.Group();
     const huis = new THREE.Mesh(new THREE.BoxGeometry(5, 3, 4), new THREE.MeshLambertMaterial({ color: 0x141a2c }));
@@ -336,12 +434,9 @@ function bouwWereld() {
         f.add(vlam);
         f.position.set(p[0], 0, p[1]);
         scene.add(f);
-        let licht = null;
-        if (i % 2 === 0) {
-            licht = new THREE.PointLight(0xff9d3c, 1.4, 9);
-            licht.position.set(p[0], 2.1, p[1]);
-            scene.add(licht);
-        }
+        const licht = new THREE.PointLight(0xff9d3c, 1.7, 10);
+        licht.position.set(p[0], 2.1, p[1]);
+        scene.add(licht);
         world.torches.push({ vlam, licht, seed: Math.random() * 10 });
         world.obstakels.push({ x: p[0], z: p[1], r: 0.25 });
     });
@@ -412,6 +507,9 @@ function bouwWereld() {
 
     world.npcs.push(maakNpc('grimwick', 'Grimwick', -41.5, 28.5, 'assets/img/grimwick.png', 0xffb84d));
     world.npcs.push(maakNpc('varynth', 'Varynth', 4.5, -48, 'assets/img/gouden-masker.jpg', 0x9fc2e8));
+    world.npcs.push(maakNpc('malthor', 'Malthor', 6, 8, 'assets/img/malthor.jpg', 0xffaa33));
+    world.npcs.push(maakNpc('twin', 'Vespera & Vaelen', -20, -38, 'assets/img/twin-echoes.jpg', 0x9fc2e8));
+    world.npcs.push(maakNpc('trio', 'Het Waxen Trio', 30, 51, 'assets/img/waxen-trio.jpg', 0xd4af37));
 
     world.boss = maakBoss();
 
@@ -419,7 +517,10 @@ function bouwWereld() {
     speler.mesh.position.copy(speler.pos);
     scene.add(speler.mesh);
 
-    [[20, 10], [-20, -15], [30, -45], [-30, 45], [50, -10], [-50, -30]].forEach((p) => spawneVijand(p[0], p[1]));
+    [[20, 10], [-20, -15], [30, -45], [-30, 45], [50, -10], [-50, -30], [40, 30], [-35, 20], [10, -40], [-10, 55]].forEach((p) => spawneVijand(p[0], p[1]));
+    spawneVijand(-55, -48, 'bloedschim');
+    spawneVijand(-26, -40, 'bloedschim');
+    spawneVijand(9, -46, 'bloedschim');
 }
 
 function burst(pos, kleur, n) {
@@ -557,14 +658,14 @@ function slagToepassen() {
         const d = Math.hypot(dx, dz);
         if (d < 3.0) {
             const hv = Math.atan2(dx, dz);
-            if (Math.abs(hoek(hv - speler.richting)) < 1.1 || d < 1.2) hurtVijand(v, 15, dx, dz);
+            if (Math.abs(hoek(hv - speler.richting)) < 1.1 || d < 1.2) hurtVijand(v, state.zwaardSchade, dx, dz);
         }
     });
     const b = world.boss;
     if (b && b.hp > 0) {
         const dx = b.mesh.position.x - speler.pos.x;
         const dz = b.mesh.position.z - speler.pos.z;
-        if (Math.hypot(dx, dz) < 3.6) hurtBoss(15);
+        if (Math.hypot(dx, dz) < 3.6) hurtBoss(state.zwaardSchade);
     }
 }
 
@@ -615,10 +716,34 @@ function npcRegels(npc) {
             'Malagor wacht op je, reiziger. Ga — en onthoud: niemand weet aan welke kant ik sta. Misschien weet ik het zelf niet eens.'
         ];
     }
-    return [
-        'Je draagt het water nog in je zakken, reiziger. De poort blijft dicht.',
-        'Kom terug wanneer je alle vijf de relikwieën hebt gevonden. Dan breek ik de eed.'
-    ];
+    if (npc.id === 'varynth') {
+        return [
+            'Je draagt het water nog in je zakken, reiziger. De poort blijft dicht.',
+            'Kom terug wanneer je alle vijf de relikwieën hebt gevonden. Dan breek ik de eed.'
+        ];
+    }
+    if (npc.id === 'malthor') {
+        return [
+            'Berichten van de doden, aanwijzingen voor de levenden — altijd tegen een prijs, reiziger.',
+            'Kijk naar het kasteel in het westen, of naar de poort in het noorden. Daar bewaart de Bewaker zijn geheim.',
+            'Neem dit — het kwam van de doden: een herinnering die geneest.'
+        ];
+    }
+    if (npc.id === 'twin') {
+        return [
+            'Elke eed die in bloed is geschreven, wordt door het water teruggevorderd...',
+            'Jij bent nog heel, sterveling. Het water geeft terug wat het nam.',
+            'Zwem hier nooit in. Wij hebben gezworen dat te bewaken.'
+        ];
+    }
+    if (npc.id === 'trio') {
+        return [
+            'Elke koning valt, elke pion bereikt de overkant...',
+            'Jouw zwaard is nog scherp, reiziger. Kijk maar — het wordt scherper.',
+            'Speel mee in ons schaakspel, en je wint. Verlies, en je vergeet een geliefde.'
+        ];
+    }
+    return ['...'];
 }
 
 function dichtstbijzijndeNpc() {
@@ -682,7 +807,40 @@ function sluitDialoog() {
         } else if (state.quest < 2) {
             questZet(2);
         }
+    } else if (n.id === 'malthor') {
+        spawnOrb(speler.pos.x + 1, speler.pos.z);
+        melding('Malthor fluistert: de dichtstbijzijnde relikwie staat in het ' + richtingNaarRelikwie());
+    } else if (n.id === 'twin') {
+        if (state.hp < 60) {
+            state.hp = clamp(state.hp + 30, 0, state.maxHp);
+            updateHUD();
+            melding('Het water geeft terug — +30 levens');
+        } else {
+            melding('De Twin Echoes oordelen: je bent nog heel, sterveling');
+        }
+    } else if (n.id === 'trio') {
+        state.zwaardSchade = 25;
+        melding('Het Waxen Trio scherpt je zwaard — schade nu ' + state.zwaardSchade);
     }
+}
+
+function richtingNaarRelikwie() {
+    let beste = null;
+    let bd = 1e9;
+    world.relikwieen.forEach((r) => {
+        if (r.genomen) return;
+        const d = Math.hypot(r.x - speler.pos.x, r.z - speler.pos.z);
+        if (d < bd) {
+            bd = d;
+            beste = r;
+        }
+    });
+    if (!beste) return '—';
+    const dx = beste.x - speler.pos.x;
+    const dz = beste.z - speler.pos.z;
+    const graden = ((Math.atan2(dx, -dz) * 180) / Math.PI + 360) % 360;
+    const richtingen = ['noorden', 'noordoosten', 'oosten', 'zuidoosten', 'zuiden', 'zuidwesten', 'westen', 'noordwesten'];
+    return richtingen[Math.round(graden / 45) % 8] + ' (' + Math.round(bd) + 'm)';
 }
 
 function updateVijanden(dt) {
@@ -696,7 +854,7 @@ function updateVijanden(dt) {
         if (d < 12 && d > 0.001) {
             dirx = dx / d;
             dirz = dz / d;
-            snelheid = 3.4;
+            snelheid = v.snelheidJacht;
         } else {
             v.doelT -= dt;
             if (v.doelT <= 0) {
@@ -709,7 +867,7 @@ function updateVijanden(dt) {
             if (wd >= 1) {
                 dirx = wx / wd;
                 dirz = wz / wd;
-                snelheid = 1.6;
+                snelheid = v.snelheidZwerf;
             }
         }
         if (snelheid > 0) {
@@ -741,9 +899,9 @@ function updateVijanden(dt) {
             }
         });
         v.cool -= dt;
-        if (d < 1.9 && v.cool <= 0) {
+        if (d < 1.9 * (v.type === 'bloedschim' ? 1.4 : 1) && v.cool <= 0) {
             v.cool = 1.2;
-            schadeSpeler(8);
+            schadeSpeler(v.dmg);
         }
     });
 }
@@ -940,8 +1098,8 @@ function visuals(dt) {
         }
     });
     if (world.roodLicht) world.roodLicht.intensity = 2.4 + Math.sin(tTot * 2.2) * 0.5;
-    const afstand = 7 - cam.pitch * 2.5;
-    const hoogte = 2.6 + cam.pitch * 3.2;
+    const afstand = 5.6 - cam.pitch * 2.0;
+    const hoogte = 2.2 + cam.pitch * 2.6;
     camera.position.set(
         speler.pos.x + Math.sin(cam.yaw) * afstand,
         hoogte,
@@ -976,6 +1134,16 @@ function startSpel() {
 }
 
 function bindInvoer() {
+    function wisselFullscreen() {
+        if (typeof document === 'undefined') return;
+        const stage = $('game3d-stage');
+        if (!document.fullscreenElement) {
+            const el = stage || document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen();
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
     const KEYMAP = { KeyW: 'f', ArrowUp: 'f', KeyS: 'b', ArrowDown: 'b', KeyA: 'l', ArrowLeft: 'l', KeyD: 'r', ArrowRight: 'r' };
     if (typeof window !== 'undefined' && window.addEventListener) {
         window.addEventListener('keydown', (e) => {
@@ -990,6 +1158,8 @@ function bindInvoer() {
             } else if (e.code === 'KeyE') {
                 input.praten = true;
                 if (e.preventDefault) e.preventDefault();
+            } else if (e.code === 'KeyF') {
+                wisselFullscreen();
             }
         });
         window.addEventListener('keyup', (e) => {
@@ -1098,6 +1268,19 @@ function bindInvoer() {
         const pk = $('touch-praten');
         if (pk) pk.addEventListener('touchstart', (e) => { input.praten = true; if (e.preventDefault) e.preventDefault(); }, { passive: false });
     }
+    const fsk = $('hud-fullscreen');
+    if (fsk) fsk.addEventListener('click', wisselFullscreen);
+    if (typeof document !== 'undefined' && document.addEventListener) {
+        document.addEventListener('fullscreenchange', () => {
+            setTekst('hud-fullscreen', document.fullscreenElement ? '✕' : '⛶');
+            const stage = $('game3d-stage');
+            if (renderer && stage && camera) {
+                renderer.setSize(stage.clientWidth, stage.clientHeight);
+                camera.aspect = stage.clientWidth / stage.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+        });
+    }
     const vk = $('hud-dialoog-volgende');
     if (vk) vk.addEventListener('click', () => praat());
     const bk = $('hud-bericht-knop');
@@ -1117,6 +1300,7 @@ function init() {
         renderer.setSize(w, h);
         if (typeof THREE.SRGBColorSpace !== 'undefined') renderer.outputColorSpace = THREE.SRGBColorSpace;
         if (typeof THREE.ACESFilmicToneMapping !== 'undefined') renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
         const holder = $('game3d-canvas');
         if (holder && renderer.domElement) holder.appendChild(renderer.domElement);
         camera.aspect = w / h;
