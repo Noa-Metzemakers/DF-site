@@ -67,10 +67,21 @@ let tijdAcc = 0;
 let tTot = 0;
 
 let GLTFLoader = null;
+let dracoLoader = null;
 const loadersKlaar = (async () => {
     try {
-        const mod = await import('three/addons/loaders/GLTFLoader.js');
-        GLTFLoader = mod.GLTFLoader || null;
+        const gltfMod = await import('three/addons/loaders/GLTFLoader.js');
+        GLTFLoader = gltfMod.GLTFLoader || null;
+        try {
+            const dracoMod = await import('three/addons/loaders/DRACOLoader.js');
+            const DL = dracoMod.DRACOLoader;
+            if (DL) {
+                dracoLoader = new DL();
+                dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/libs/draco/');
+            }
+        } catch (e) {
+            dracoLoader = null;
+        }
     } catch (e) {
         GLTFLoader = null;
     }
@@ -86,7 +97,9 @@ function laadModelMetFallback(groep, verberg, id) {
     const probeer = (i) => {
         if (i >= paden.length) return;
         try {
-            new GLTFLoader().load(paden[i], (gltf) => {
+            const loader = new GLTFLoader();
+            if (dracoLoader) loader.setDRACOLoader(dracoLoader);
+            loader.load(paden[i], (gltf) => {
                 const m = gltf.scene;
                 m.scale.setScalar(schaal);
                 if (verberg) verberg.visible = false;
